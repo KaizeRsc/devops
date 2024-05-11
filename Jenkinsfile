@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        PATH = "${tool 'Maven'}/bin:${env.PATH}" // Assurez-vous que le nom 'Maven' est correct
+    }
 
     stages {
         stage('Checkout') {
