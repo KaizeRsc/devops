@@ -1,38 +1,34 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven' // Assurez-vous que Maven est configuré dans les outils globaux de Jenkins
-    }
-
-    environment {
-        SONARQUBE_SCANNER_HOME = tool 'SonarQube Scanner'
-    }
-
     stages {
         stage('Checkout') {
             steps {
-                checkout scm // Récupère le code source du repository configuré dans Jenkins
+                checkout scm
             }
         }
 
         stage('Build') {
             steps {
-                sh 'mvn clean package' // Exécute Maven pour nettoyer et construire le package
+                dir('devops/myproject') { // Chemin vers le dossier contenant le pom.xml
+                    sh 'mvn clean package'
+                }
             }
         }
 
         stage('Test') {
             steps {
-                sh 'mvn test' // Exécute les tests Maven
+                dir('devops/myproject') { // Chemin vers le dossier contenant le pom.xml
+                    sh 'mvn test'
+                }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                script {
-                    withSonarQubeEnv('SonarQube') { // Utilisez ici le nom que vous avez donné à la configuration SonarQube dans Jenkins
-                        sh "${env.SONARQUBE_SCANNER_HOME}/bin/sonar-scanner"
+                dir('devops/myproject') { // Chemin vers le dossier contenant le pom.xml
+                    withSonarQubeEnv('SonarQube') {
+                        sh 'mvn sonar:sonar'
                     }
                 }
             }
