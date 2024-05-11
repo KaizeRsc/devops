@@ -1,8 +1,5 @@
 pipeline {
     agent any
-    environment {
-        PATH = "${tool 'Maven'}/bin:${env.PATH}" // Assurez-vous que le nom 'Maven' est correct
-    }
 
     stages {
         stage('Checkout') {
@@ -13,7 +10,8 @@ pipeline {
 
         stage('Build') {
             steps {
-                dir('devops/myproject') { // Chemin vers le dossier contenant le pom.xml
+                dir('devops/myproject') { // Assurez-vous que ce chemin est correct
+                    sh 'ls -la' // Ajout pour déboguer et voir les fichiers présents
                     sh 'mvn clean package'
                 }
             }
@@ -21,7 +19,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                dir('devops/myproject') { // Chemin vers le dossier contenant le pom.xml
+                dir('devops/myproject') {
                     sh 'mvn test'
                 }
             }
@@ -29,7 +27,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                dir('devops/myproject') { // Chemin vers le dossier contenant le pom.xml
+                dir('devops/myproject') {
                     withSonarQubeEnv('SonarQube') {
                         sh 'mvn sonar:sonar'
                     }
